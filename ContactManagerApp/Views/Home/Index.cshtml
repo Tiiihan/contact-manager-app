@@ -1,0 +1,87 @@
+﻿@model IEnumerable<ContactManagerApp.Models.Contact>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container">
+    <div class="main-card">
+
+        <h2 class="mb-4 title-primary">Contact Manager</h2>
+
+        <form id="uploadForm" asp-action="Upload" method="post" enctype="multipart/form-data">
+            <div class="file-input-wrapper">
+                <i class="bi bi-file-earmark-spreadsheet icon-xl"></i>
+                <input type="file" id="fileInput" name="postedFile" accept=".csv" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-success">
+                Upload <span class="d-none d-sm-inline">CSV</span>
+            </button>
+            <button type="button" id="clearFileBtn" class="btn btn-outline-danger">Clear</button>
+        </form>
+
+        <div class="filter-bar">
+            <h4>Filter contacts</h4>
+
+            <select id="column-select" class="form-select w-auto">
+                <option value="all">All columns</option>
+                <option value="0">Name</option>
+                <option value="1">Date of birth</option>
+                <option value="2">Married</option>
+                <option value="3">Phone</option>
+                <option value="4">Salary</option>
+            </select>
+
+            <div class="search-wrapper">
+                <input type="text" id="search-input" placeholder="Type to search..." />
+            </div>
+        </div>
+
+        @if (Model != null && Model.Any())
+        {
+            <div class="table-responsive">
+                <table id="contactsTable" class="table custom-table">
+                    <thead>
+                        <tr>
+                            <th data-type="string">Name</th>
+                            <th data-type="date">Date of birth</th>
+                            <th data-type="bool" class="text-center">Married</th>
+                            <th data-type="string">Phone</th>
+                            <th data-type="number">Salary</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var contact in Model)
+                        {
+                            <tr data-id="@contact.Id">
+                                <td contenteditable="true">@contact.Name</td>
+                                <td contenteditable="true">@contact.DateOfBirth.ToString("yyyy-MM-dd")</td>
+                                <td class="text-center">
+                                    <input type="checkbox" class="married-checkbox js-married" @(contact.Married ? "checked" : "") />
+                                </td>
+                                <td contenteditable="true">@contact.Phone</td>
+                                <td contenteditable="true">@contact.Salary</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-danger btn-sm js-delete">Delete</button>
+                                        <button disabled class="btn btn-success btn-sm js-save">Save</button>
+                                        <button hidden class="btn btn-secondary btn-sm js-cancel">Cancel</button>
+                                        <button hidden class="btn btn-warning btn-sm js-confirm">Confirm</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info text-center" role="alert">
+                No contacts found. Please upload a CSV file to get started.
+            </div>
+        }
+    </div>
+</div>
+
+<div id="toast-container"></div>
